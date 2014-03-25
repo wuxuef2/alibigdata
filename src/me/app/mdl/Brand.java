@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Brand {
 	private Long brandID;
-	private List<Consumerecord> comsumerecords;
+	private List<Behavior> behaviors;
 	
 	public Brand(Long brandID) {
 		super();
@@ -19,12 +19,12 @@ public class Brand {
 		this.brandID = brandID;
 	}
 	
-	public List<Consumerecord> getComsumerecords() {
-		return comsumerecords;
+	public List<Behavior> getComsumerecords() {
+		return behaviors;
 	}
 	
-	public void setComsumerecords(List<Consumerecord> comsumerecords) {
-		this.comsumerecords = comsumerecords;
+	public void setComsumerecords(List<Behavior> comsumerecords) {
+		this.behaviors = comsumerecords;
 	}
 	
 }

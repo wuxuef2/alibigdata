@@ -26,7 +26,7 @@ public class UserStatistics extends Statistics {
 			Date visitDatetime = string2Date(rows.get(i).getDate());
 			Integer code = rows.get(i).getType();
 			Consts.ActionType type = Consts.ActionType.fromCode(code);
-			Behavior tmpBehavior = new Behavior(brandID, type, visitDatetime);
+			Behavior tmpBehavior = new Behavior(brandID, uid, type, visitDatetime);
 			
 			if (behaviorsSets.containsKey(uid)) {
 				behaviorsSets.get(uid).add(tmpBehavior);
