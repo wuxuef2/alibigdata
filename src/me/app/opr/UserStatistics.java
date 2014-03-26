@@ -20,6 +20,11 @@ public class UserStatistics extends Statistics {
 	public UserStatistics() {
 		super();
 		createUsers();
+	}	
+
+	public List<User> getUsers() {
+		// TODO Auto-generated method stub
+		return users;
 	}
 	
 	public void createUsers() {
@@ -101,4 +106,5 @@ public class UserStatistics extends Statistics {
 		hotBrands = (HashMap<Long, Double>) sortByValue(hotBrands);	
 		return hotBrands;
 	}
+
 }

@@ -2,8 +2,12 @@ package me.app.utl;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import me.app.mdl.Row;
 
@@ -33,5 +37,29 @@ public class FileUtil {
 		}
 
 		return rows;
+	}
+
+	public static <K, V extends Comparable<? super V>> void fout2csv(
+			Map<K, V> map, String path) {
+		Set<K> set = map.keySet();
+		Iterator<K> iterator = set.iterator();
+		FileWriter fw = null;
+
+		try {
+			fw = new FileWriter(path);
+			while (iterator.hasNext()) {
+				K key = iterator.next();
+				fw.write(key + "," + map.get(key) + "\n");
+			}
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fw.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

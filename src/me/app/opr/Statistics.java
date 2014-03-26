@@ -20,7 +20,7 @@ import me.app.mdl.Topic;
 
 public abstract class Statistics {
 	protected static final String INPUT_PATH = "D://kuaipan//document//alibidata//t_alibaba_data.csv";
-	protected int monthNum = 3;
+	protected int monthNum = 4;
 	protected Date deadline;
 	
 	protected Statistics() {
