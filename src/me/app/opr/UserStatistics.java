@@ -6,6 +6,7 @@ import me.app.base.*;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 统计用户等各类数据
@@ -15,6 +16,11 @@ import java.util.Map.Entry;
  */
 public class UserStatistics extends Statistics {
 	private List<User> users = new ArrayList<User>();
+	
+	public UserStatistics() {
+		super();
+		createUsers();
+	}
 	
 	public void createUsers() {
 		ArrayList<Row> rows = FileUtil.readFile(INPUT_PATH);
@@ -48,22 +54,51 @@ public class UserStatistics extends Statistics {
 	
 	public User getUser(long uid) {
 		for (int i = 0; i < users.size(); i++) {
-			if (users.get(i).getUid() == uid)
+			if (users.get(i).getId() == uid)
 				return users.get(i);
 		}
 		
 		return null;
+	}	
+	
+	public HashMap<Long, Double> getHot(double threshold) {		
+		HashMap<Long, Double> hotBrands = new HashMap<Long, Double>();
+		for (int i = 0; i < users.size(); i++) {
+			double score = getScore(users.get(i));
+			Long uid = users.get(i).getId();			
+			if (score > threshold)
+				hotBrands.put(uid, score);
+		}
+		
+		hotBrands = (HashMap<Long, Double>) sortByValue(hotBrands);		
+		return hotBrands;
 	}
 	
-	public int getActionTimes(User user, Consts.ActionType actionType) {
-		List<Behavior> behaviorList = user.getBehaviors();
-		int Times = 0;
-		for (int i = 0; i < behaviorList.size(); i++) {
-			if (behaviorList.get(i).getType() == actionType) {
-				Times++;
+	public HashMap<Long, Double> getActionTimeSpan(Consts.ActionType type) {
+		HashMap<Long, Double> timespans = new HashMap<Long, Double>();
+		for (int i = 0; i < users.size(); i++) {
+			double timespan = getActionTimeSpan(users.get(i), type, Consts.TopicType.USER);
+			Long uid = users.get(i).getId();
+			timespans.put(uid, timespan);
+		}
+		timespans = (HashMap<Long, Double>) sortByValue(timespans);
+		return timespans;
+	}
+	
+	public HashMap<Long, Double> getActionFrequenceEveryMonthEveryBrand(Consts.ActionType type, HashMap<Long, Integer> brandNumber) {
+		HashMap<Long, Double> hotBrands = new HashMap<Long, Double>();
+		for (int i = 0; i < users.size(); i++) {
+			AtomicInteger userNumbers = new AtomicInteger(0);
+			double frequence = getTopicFrequence(users.get(i), type, userNumbers, Consts.TopicType.USER);	
+			Long uid = users.get(i).getId();		
+			
+			if (frequence != 0.0) { 	
+				hotBrands.put(uid, frequence);
+				brandNumber.put(uid, userNumbers.get());
 			}
 		}
-		return Times;
+		
+		hotBrands = (HashMap<Long, Double>) sortByValue(hotBrands);	
+		return hotBrands;
 	}
-
 }

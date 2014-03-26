@@ -13,13 +13,16 @@ public class Main {
 	public static void main(String[] args) {
 		BrandStatistics brandStatistics = new BrandStatistics();
 		HashMap<Long, Integer> personNumber = new HashMap<Long, Integer>();
-		HashMap<Long, Double> hotBrands = brandStatistics.getActionFrequenceEveryMonthEveryPerson(Consts.ActionType.BUY, personNumber);
+		HashMap<Long, Double> hotBrands = brandStatistics.getActionTimeSpan(Consts.ActionType.BUY);
 		Set<Long> set = hotBrands.keySet();
 		Iterator<Long> it = set.iterator();
+		int size = 0;
 		while(it.hasNext()){
+			size++;
 			Long s = (Long)it.next();			
-			System.out.println(s + ": " + hotBrands.get(s) + " by " + personNumber.get(s) + " persons.");
+			System.out.println(s + ": " + hotBrands.get(s));
 	    }
+		System.out.println("size: " + size);
 	}
 
 }

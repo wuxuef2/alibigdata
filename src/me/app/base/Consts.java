@@ -34,4 +34,25 @@ public class Consts {
             }
         }
     }
+    
+    public enum TopicType{
+        USER(0), BRAND(1);
+        private int code;
+        private TopicType(Integer code) {
+            this.code = code;
+        }
+
+        public Integer getCode() {
+            return this.code;
+        }
+
+        public static TopicType fromCode(Integer code) {
+            switch (code) {
+                case 0:
+                    return USER;
+                default:
+                    return BRAND;
+            }
+        }
+    }
 }

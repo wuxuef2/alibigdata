@@ -1,6 +1,5 @@
 package me.app.mdl;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -8,31 +7,14 @@ import java.util.Set;
  * User: SanDomingo
  * Date: 3/22/14
  * Time: 9:31 PM
+ * Change: wuxuef
  */
-public class User {
-    private Long uid; // 用户ID
-    private List<Behavior> behaviors; // 若干操作记录
+public class User extends Topic {
     private Set<Long> reallyBuy; // 下个月的真实购买记录
     private Set<Long> willBuy; // 预测下个月将购买记录
 
-    public User(Long uid) {
-        this.uid = uid;
-    }
-
-    public Long getUid() {
-        return uid;
-    }
-
-    public void setUid(Long uid) {
-        this.uid = uid;
-    }
-
-    public List<Behavior> getBehaviors() {
-        return behaviors;
-    }
-
-    public void setBehaviors(List<Behavior> behaviors) {
-        this.behaviors = behaviors;
+    public User(Long id) {
+        this.id = id;
     }
 
     public Set<Long> getReallyBuy() {
