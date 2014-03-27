@@ -19,16 +19,7 @@ import me.app.mdl.Behavior;
 import me.app.mdl.Topic;
 
 public abstract class Statistics {
-	protected static final String INPUT_PATH = "D://kuaipan//document//alibidata//t_alibaba_data.csv";
-	protected int monthNum = 4;
-	protected Date deadline;
-	
-	protected Statistics() {
-		Calendar myDate = Calendar.getInstance();
-		myDate.set(Calendar.MONTH, 7);
-		myDate.set(Calendar.DAY_OF_MONTH, 15);
-		deadline = myDate.getTime();
-	}
+	protected int monthNum = 4;	
 	
 	Comparator<Behavior> comparator = new Comparator<Behavior>(){
 	   public int compare(Behavior behavior1, Behavior behavior2) {
@@ -43,7 +34,7 @@ public abstract class Statistics {
 		int i;
 		for (i = 0; i < dateString.length(); i++) {
 			if (Character.isDigit(dateString.charAt(i))) {
-				month = month * 10 + dateString.charAt(i) - '0';
+				month = month * 10 + dateString.charAt(i) - '1';
 			} else {
 				break;
 			}
@@ -59,7 +50,7 @@ public abstract class Statistics {
 		Calendar myDate = Calendar.getInstance();
 		myDate.set(Calendar.MONTH, month);
 		myDate.set(Calendar.DAY_OF_MONTH, day);
-		
+				
 		return myDate.getTime();
 	}
 	

@@ -28,7 +28,7 @@ public class UserStatistics extends Statistics {
 	}
 	
 	public void createUsers() {
-		ArrayList<Row> rows = FileUtil.readFile(INPUT_PATH);
+		ArrayList<Row> rows = FileUtil.readFile(Consts.INPUT_PATH);
 		HashMap<Long, List<Behavior>> behaviorsSets = new HashMap<Long, List<Behavior>>();
 		
 		for (int i = 0; i < rows.size(); i++) {
@@ -53,8 +53,36 @@ public class UserStatistics extends Statistics {
 			Entry<Long, List<Behavior>> entry = (Entry<Long, List<Behavior>>)it.next();
 			User tmpUser = new User((Long)entry.getKey());
 			tmpUser.setBehaviors(entry.getValue());
-			users.add(tmpUser);
+			users.add(tmpUser);			
 		}
+	}
+	
+	public void setForecastMode(Date deadline) {
+		for (int j = 0; j < users.size(); j++) {
+			User user = users.get(j);			
+			Set<Long> reallyBuy = new HashSet<Long>();
+			for (int i = 0; i < user.getBehaviors().size(); i++) {
+				if (user.getBehaviors().get(i).getVisitDatetime().getTime() > deadline.getTime()) {
+					if (user.getBehaviors().get(i).getType() == Consts.ActionType.BUY
+							&& !reallyBuy.contains(user.getBehaviors().get(i)
+									.getBrandID())) {
+						reallyBuy.add(user.getBehaviors().get(i).getBrandID());
+					}
+					user.getBehaviors().remove(i);
+				}
+			}
+
+			user.setReallyBuy(reallyBuy);
+		}
+	}
+
+	public void outputReallyBuy() {
+		HashMap<Long, Integer> buyNuMap = new HashMap<Long, Integer>();
+		for (int j = 0; j < users.size(); j++) {
+			User user = users.get(j);
+			buyNuMap.put(user.getId(), user.getReallyBuy().size());
+		}
+		FileUtil.fout2csv(buyNuMap, "D:\\see.csv");
 	}
 	
 	public User getUser(long uid) {

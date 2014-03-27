@@ -10,6 +10,7 @@ public class Consts {
      * 用户行为类型
      * 包括点击，购买，收藏，加入购物车
      */
+	public static final String INPUT_PATH = "D://kuaipan//document//alibidata//t_alibaba_data.csv";
     public enum ActionType{
         CLICK(0), BUY(1), FAVOURITE(2), ADD2CART(3);
         private int code;

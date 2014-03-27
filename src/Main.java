@@ -5,6 +5,7 @@ import java.util.Set;
 
 import me.app.base.Consts;
 import me.app.opr.BrandStatistics;
+import me.app.opr.Forecast;
 import me.app.opr.UserStatistics;
 
 
@@ -26,8 +27,12 @@ public class Main {
 	    }
 		System.out.println("size: " + size);*/
 		
-		brandStatic("D:\\kuaipan\\document\\alibidata\\BrandStatistics.csv");
-		userStatic("D:\\kuaipan\\document\\alibidata\\userStatistics.csv");
+		//brandStatic("D:\\BrandStatistics.csv");
+		//userStatic("D:\\userStatistics.csv");
+		Forecast forecast = new Forecast();
+		//forecast.curForecast();
+		forecast.tmpForecast();
+		//forecast.setWillBuyFormTXT();
 	}
 	
 	public static void brandStatic(String path) {

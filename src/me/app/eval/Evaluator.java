@@ -36,6 +36,7 @@ public class Evaluator {
         for (User auser : testUsers) {
             Set<Long> realBuy = auser.getReallyBuy();
             Set<Long> predictBuy = auser.getWillBuy();
+            if (predictBuy == null) continue;
             pBrands += predictBuy.size();
             bBrands += realBuy.size();
             for (Long brand : predictBuy) {
@@ -66,11 +67,11 @@ public class Evaluator {
         System.out.println("F1: " + F1 + "Precision: " + precision + "\t" + "Recall: " + recall);
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Evaluator eval = new Evaluator();
         List<User> testUsers = getUserFromFile("users.txt");
         eval.eval(testUsers);
-    }
+    }*/
 
     //TODO
     private static List<User> getUserFromFile(String s) {

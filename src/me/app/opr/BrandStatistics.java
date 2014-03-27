@@ -28,7 +28,7 @@ public class BrandStatistics extends Statistics{
 	}
 	
 	private void createBrands() {
-		ArrayList<Row> rows = FileUtil.readFile(INPUT_PATH);
+		ArrayList<Row> rows = FileUtil.readFile(Consts.INPUT_PATH);
 		HashMap<Long, List<Behavior>> ConsumerecordSets = new HashMap<Long, List<Behavior>>();
 		
 		for (int i = 0; i < rows.size(); i++) {
@@ -55,7 +55,18 @@ public class BrandStatistics extends Statistics{
 			tmpBrand.setBehaviors(entry.getValue());
 			brands.add(tmpBrand);
 		}
-	}	
+	}
+	
+	public void setForecastMode(Date deadline) {
+		for (int j = 0; j < brands.size(); j++) {
+			Brand brand = brands.get(j);
+			for (int i = 0; i < brand.getBehaviors().size(); i++) {
+				if (brand.getBehaviors().get(i).getVisitDatetime().after(deadline)) {
+					brand.getBehaviors().remove(i);
+				}
+			}
+		}
+	}
 	
 	public List<Brand> getBrands() {
 		return brands;
