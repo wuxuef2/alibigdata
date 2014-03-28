@@ -20,7 +20,7 @@ import me.app.mdl.Row;
 import me.app.utl.FileUtil;
 
 public class BrandStatistics extends Statistics{
-	private static List<Brand> brands = new ArrayList<Brand>();
+	private List<Brand> brands = new ArrayList<Brand>();
 	
 	public BrandStatistics() {
 		super();
@@ -60,7 +60,7 @@ public class BrandStatistics extends Statistics{
 	public void setForecastMode(Date deadline) {
 		for (int j = 0; j < brands.size(); j++) {
 			Brand brand = brands.get(j);
-			for (int i = brand.getBehaviors().size() - 1; i >= 0; i--) {
+			for (int i = 0; i < brand.getBehaviors().size(); i++) {
 				if (brand.getBehaviors().get(i).getVisitDatetime().after(deadline)) {
 					brand.getBehaviors().remove(i);
 				}
