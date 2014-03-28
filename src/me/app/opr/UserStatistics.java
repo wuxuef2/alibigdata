@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 05:00 PM
  */
 public class UserStatistics extends Statistics {
-	private List<User> users = new ArrayList<User>();
+	private static List<User> users = new ArrayList<User>();
 	
 	public UserStatistics() {
 		super();
@@ -61,11 +61,11 @@ public class UserStatistics extends Statistics {
 		for (int j = 0; j < users.size(); j++) {
 			User user = users.get(j);			
 			Set<Long> reallyBuy = new HashSet<Long>();
-			for (int i = 0; i < user.getBehaviors().size(); i++) {
+			for (int i = user.getBehaviors().size() - 1; i >= 0; i--) {
 				if (user.getBehaviors().get(i).getVisitDatetime().getTime() > deadline.getTime()) {
-					if (user.getBehaviors().get(i).getType() == Consts.ActionType.BUY
-							&& !reallyBuy.contains(user.getBehaviors().get(i)
-									.getBrandID())) {
+					if (!reallyBuy.contains(user.getBehaviors().get(i)
+							.getBrandID())
+							&& user.getBehaviors().get(i).getType() == Consts.ActionType.BUY) {
 						reallyBuy.add(user.getBehaviors().get(i).getBrandID());
 					}
 					user.getBehaviors().remove(i);
@@ -74,15 +74,6 @@ public class UserStatistics extends Statistics {
 
 			user.setReallyBuy(reallyBuy);
 		}
-	}
-
-	public void outputReallyBuy() {
-		HashMap<Long, Integer> buyNuMap = new HashMap<Long, Integer>();
-		for (int j = 0; j < users.size(); j++) {
-			User user = users.get(j);
-			buyNuMap.put(user.getId(), user.getReallyBuy().size());
-		}
-		FileUtil.fout2csv(buyNuMap, "D:\\see.csv");
 	}
 	
 	public User getUser(long uid) {

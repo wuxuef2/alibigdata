@@ -30,8 +30,8 @@ public class Main {
 		//brandStatic("D:\\BrandStatistics.csv");
 		//userStatic("D:\\userStatistics.csv");
 		Forecast forecast = new Forecast();
-		//forecast.curForecast();
-		forecast.tmpForecast();
+		forecast.curForecast();
+		//forecast.tmpForecast();
 		//forecast.setWillBuyFormTXT();
 	}
 	
