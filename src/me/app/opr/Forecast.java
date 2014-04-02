@@ -77,13 +77,6 @@ public class Forecast {
 					like.remove(j);
 					continue;
 				}
-				if (timeSpan.containsKey(like.get(j)) 
-						&& timeSpan.get(like.get(j)) < 1 
-						&& personNumber.containsKey(like.get(j))
-						&& personNumber.get(like.get(j)) == 1) {
-					like.remove(j);
-					continue;
-				}
 				if (hotBrandsByScore.containsKey(like.get(j))
 					&& hotBrandsByScore.get(like.get(j)) < 2) {
 					like.remove(j);
@@ -124,13 +117,6 @@ public class Forecast {
 						like.remove(j);
 						continue;
 					}
-					/*if (timeSpan.containsKey(like.get(j)) 
-							&& timeSpan.get(like.get(j)) < 1 
-							&& personNumber.containsKey(like.get(j))
-							&& personNumber.get(like.get(j)) == 1) {
-						like.remove(j);
-						continue;
-					}*/
 					if (hotBrandsByScore.containsKey(like.get(j))
 							&& hotBrandsByScore.get(like.get(j)) < 2) {
 						like.remove(j);

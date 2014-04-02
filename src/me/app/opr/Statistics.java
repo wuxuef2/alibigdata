@@ -18,8 +18,17 @@ import me.app.base.Consts;
 import me.app.mdl.Behavior;
 import me.app.mdl.Topic;
 
+
 public abstract class Statistics {
-	protected int monthNum = 4;	
+	protected static int monthNum = 4;	
+	protected static Date forecastDate;
+	
+	static {
+		Calendar myDate = Calendar.getInstance();
+		myDate.set(Calendar.MONTH, 8);
+		myDate.set(Calendar.DAY_OF_MONTH, 15);
+		forecastDate = myDate.getTime();
+	}
 	
 	Comparator<Behavior> comparator = new Comparator<Behavior>(){
 	   public int compare(Behavior behavior1, Behavior behavior2) {
@@ -109,7 +118,9 @@ public abstract class Statistics {
 	public double getScore(Topic topic) {
 		double score = 0;
 		for (int j = 0; j < topic.getBehaviors().size(); j++) {
-			score += getWeight(topic.getBehaviors().get(j).getType());
+			score += getWeight(topic.getBehaviors().get(j).getType())
+					* getWeightByDate(topic.getBehaviors().get(j)
+							.getVisitDatetime());
 		}
 		return score;
 	}
@@ -206,6 +217,16 @@ public abstract class Statistics {
 		int buyTimes = getActionTimes(topic, Consts.ActionType.BUY);
 		
 		return (double)buyTimes / (double)otherActionTimes;
+	}
+	
+	public double getWeightByDate(Date curDate) {
+		Calendar myDate = Calendar.getInstance();
+		myDate.set(Calendar.MONTH, 3);
+		myDate.set(Calendar.DAY_OF_MONTH, 1);
+		Date startDate = myDate.getTime();
+		long days = (curDate.getTime() - startDate.getTime()) % (24 * 60 * 60 * 1000 * 3);
+		long base = (forecastDate.getTime() - startDate.getTime()) % (24 * 60 * 60 * 1000 * 3);
+		return Math.log(days - Math.sqrt(days)) / Math.log(base);
 	}
 			
 }
