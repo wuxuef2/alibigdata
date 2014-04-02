@@ -13,26 +13,9 @@ public class Main {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		/*BrandStatistics brandStatistics = new BrandStatistics();
-		HashMap<Long, Integer> personNumber = new HashMap<Long, Integer>();
-		HashMap<Long, Double> hotBrands = brandStatistics.getActionTimeSpan(Consts.ActionType.BUY);
-		Set<Long> set = hotBrands.keySet();
-		Iterator<Long> it = set.iterator();
-		int size = 0;
-		while(it.hasNext()){
-			size++;
-			Long s = (Long)it.next();			
-			System.out.println(s + ": " + hotBrands.get(s));
-	    }
-		System.out.println("size: " + size);*/
-		
-		//brandStatic("D:\\BrandStatistics.csv");
-		//userStatic("D:\\userStatistics.csv");
+	public static void main(String[] args) {		
 		Forecast forecast = new Forecast();
-		//forecast.curForecast();
-		forecast.tmpForecast();
-		//forecast.setWillBuyFormTXT();
+		forecast.curForecast();
 	}
 	
 	public static void brandStatic(String path) {

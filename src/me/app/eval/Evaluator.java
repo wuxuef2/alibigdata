@@ -29,14 +29,12 @@ public class Evaluator {
             clf.predict(auser);
         }
 
-
         long hitBrands = 0; // 用户预测的品牌列表与用户i真实购买的品牌交集的个数
         long pBrands = 0; // 对用户预测他(她)会购买的品牌列表个数
         long bBrands = 0; // 用户真实购买的品牌个数
         for (User auser : testUsers) {
             Set<Long> realBuy = auser.getReallyBuy();
             Set<Long> predictBuy = auser.getWillBuy();
-            if (predictBuy == null) continue;
             pBrands += predictBuy.size();
             bBrands += realBuy.size();
             for (Long brand : predictBuy) {

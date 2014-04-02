@@ -60,7 +60,7 @@ public class BrandStatistics extends Statistics{
 	public void setForecastMode(Date deadline) {
 		for (int j = 0; j < brands.size(); j++) {
 			Brand brand = brands.get(j);
-			for (int i = 0; i < brand.getBehaviors().size(); i++) {
+			for (int i = brand.getBehaviors().size() - 1; i >= 0; i--) {
 				if (brand.getBehaviors().get(i).getVisitDatetime().after(deadline)) {
 					brand.getBehaviors().remove(i);
 				}

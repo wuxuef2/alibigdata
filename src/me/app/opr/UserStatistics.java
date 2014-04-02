@@ -61,7 +61,7 @@ public class UserStatistics extends Statistics {
 		for (int j = 0; j < users.size(); j++) {
 			User user = users.get(j);			
 			Set<Long> reallyBuy = new HashSet<Long>();
-			for (int i = 0; i < user.getBehaviors().size(); i++) {
+			for (int i = user.getBehaviors().size() - 1; i >= 0; i--) {
 				if (user.getBehaviors().get(i).getVisitDatetime().getTime() > deadline.getTime()) {
 					if (user.getBehaviors().get(i).getType() == Consts.ActionType.BUY
 							&& !reallyBuy.contains(user.getBehaviors().get(i)
