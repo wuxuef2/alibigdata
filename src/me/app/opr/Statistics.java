@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import me.app.base.Consts;
 import me.app.mdl.Behavior;
+import me.app.mdl.Brand;
 import me.app.mdl.Topic;
 
 
@@ -30,11 +31,17 @@ public abstract class Statistics {
 		forecastDate = myDate.getTime();
 	}
 	
-	Comparator<Behavior> comparator = new Comparator<Behavior>(){
+	Comparator<Behavior> comparatorAsc = new Comparator<Behavior>(){
 	   public int compare(Behavior behavior1, Behavior behavior2) {
 		   return behavior1.getVisitDatetime().compareTo(behavior2.getVisitDatetime());
 	   }
 	 };
+	 
+	 Comparator<Behavior> comparatorDesc = new Comparator<Behavior>(){
+		   public int compare(Behavior behavior1, Behavior behavior2) {
+			   return -behavior1.getVisitDatetime().compareTo(behavior2.getVisitDatetime());
+		   }
+		 };
 	
 	protected Date string2Date(String dateString) {
 		int month = 0;
@@ -115,12 +122,26 @@ public abstract class Statistics {
 		return Times;
 	}
 	
+	public int getActionTimes(List<Behavior> consumerecords, Consts.ActionType actionType) {
+		int Times = 0;
+		for (int i = 0; i < consumerecords.size(); i++) {
+			if (consumerecords.get(i).getType() == actionType) {
+				Times++;
+			}
+		}
+		return Times;
+	}
+	
 	public double getScore(Topic topic) {
 		double score = 0;
 		for (int j = 0; j < topic.getBehaviors().size(); j++) {
-			score += getWeight(topic.getBehaviors().get(j).getType())
+			if (topic instanceof Brand) {
+				score += getWeight(topic.getBehaviors().get(j).getType());
+			} else {			
+				score += getWeight(topic.getBehaviors().get(j).getType())
 					* getWeightByDate(topic.getBehaviors().get(j)
 							.getVisitDatetime());
+			}
 		}
 		return score;
 	}
@@ -226,7 +247,68 @@ public abstract class Statistics {
 		Date startDate = myDate.getTime();
 		long days = (curDate.getTime() - startDate.getTime()) % (24 * 60 * 60 * 1000 * 3);
 		long base = (forecastDate.getTime() - startDate.getTime()) % (24 * 60 * 60 * 1000 * 3);
-		return Math.log(days - Math.sqrt(days)) / Math.log(base);
+		return Math.sqrt((double)days / (double)base);
 	}
 			
+	public boolean isRecent(Date date1, Date date2) {
+		return Math.abs(date1.getTime() - date2.getTime()) < 4 * 24 * 60 * 60 * 1000; 
+	}
+	
+	public boolean isRecent(long date1, long date2) {
+		return Math.abs(date1 - date2) < 7; 
+	}
+	
+
+	public int getTopicActionTimes(List<Behavior> behaviors, Long topicId, Consts.ActionType actionType, Consts.TopicType topoicType) {
+		int times = 0;
+		for (int i = 0; i < behaviors.size(); i++) {
+			if (behaviors.get(i).getType() == actionType) {
+				if (topoicType == Consts.TopicType.BRAND && behaviors.get(i).getBrandID() == topicId) {
+					times++;
+				} else if (topoicType == Consts.TopicType.USER && behaviors.get(i).getUid() == topicId) {
+					times++;
+				}
+			}
+		}
+		
+		return times;
+	}
+	
+	public Date getBehaviorLastHappenTime(List<Behavior> behaviors, Long topicId, Consts.ActionType actionType, Consts.TopicType topoicType) {
+		Calendar myDate = Calendar.getInstance();
+		myDate.set(Calendar.MONTH, 3);
+		myDate.set(Calendar.DAY_OF_MONTH, 1);
+		Date endDate = myDate.getTime();
+		
+		Collections.sort(behaviors, comparatorDesc);
+		for (int i = 0; i < behaviors.size(); i++) {
+			if (behaviors.get(i).getType() == actionType) {
+				if (topoicType == Consts.TopicType.BRAND && behaviors.get(i).getBrandID() == topicId) {
+					return behaviors.get(i).getVisitDatetime();
+				} else if (topoicType == Consts.TopicType.USER && behaviors.get(i).getUid() == topicId) {
+					return behaviors.get(i).getVisitDatetime();
+				}
+			}
+		}
+		return endDate;
+	}
+	
+	public Date getBehaviorFirstHappenTime(List<Behavior> behaviors, Long topicId, Consts.ActionType actionType, Consts.TopicType topoicType) {
+		Calendar myDate = Calendar.getInstance();
+		myDate.set(Calendar.MONTH, 3);
+		myDate.set(Calendar.DAY_OF_MONTH, 1);
+		Date beginDate = myDate.getTime();
+		
+		Collections.sort(behaviors, comparatorAsc);
+		for (int i = 0; i < behaviors.size(); i++) {
+			if (behaviors.get(i).getType() == actionType) {
+				if (topoicType == Consts.TopicType.BRAND && behaviors.get(i).getBrandID() == topicId) {
+					return behaviors.get(i).getVisitDatetime();
+				} else if (topoicType == Consts.TopicType.USER && behaviors.get(i).getUid() == topicId) {
+					return behaviors.get(i).getVisitDatetime();
+				}
+			}
+		}
+		return beginDate;
+	}
 }

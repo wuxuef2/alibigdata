@@ -56,4 +56,27 @@ public class Consts {
             }
         }
     }
+    
+    public enum BrandType{
+    	DURABLE(-1), CONSUMERS(1), UNDETERMINED(0);
+        private int code;
+        private BrandType(Integer code) {
+            this.code = code;
+        }
+
+        public Integer getCode() {
+            return this.code;
+        }
+
+        public static BrandType fromCode(Integer code) {
+            switch (code) {
+                case -1:
+                    return DURABLE;
+                case 1:
+                	return CONSUMERS;
+                default:
+                    return UNDETERMINED;
+            }
+        }
+    }
 }

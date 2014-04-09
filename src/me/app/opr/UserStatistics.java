@@ -134,5 +134,5 @@ public class UserStatistics extends Statistics {
 		hotBrands = (HashMap<Long, Double>) sortByValue(hotBrands);	
 		return hotBrands;
 	}
-
+	
 }

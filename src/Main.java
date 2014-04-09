@@ -15,7 +15,8 @@ public class Main {
 	 */
 	public static void main(String[] args) {		
 		Forecast forecast = new Forecast();
-		forecast.curForecast();
+		forecast.tmpForecast();
+		//forecast.curForecast();
 	}
 	
 	public static void brandStatic(String path) {
