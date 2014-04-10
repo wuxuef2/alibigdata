@@ -84,7 +84,7 @@ public class BrandStatistics extends Statistics{
 		for (int i = 0; i < userStatistics.getUsers().size(); i++) {
 			User user = userStatistics.getUsers().get(i);			
 			List<Behavior> behaviors = (List<Behavior>) user.getBehaviors();
-			
+						
 			for (int j = 0; j < behaviors.size(); j++) {
 				if (behaviors.get(j).getType() == Consts.ActionType.BUY) {
 					int times = getTopicActionTimes(behaviors, 
@@ -95,6 +95,11 @@ public class BrandStatistics extends Statistics{
 					if (brand.getMostBuyTimes() < times) {
 						brand.setMostBuyTimes(times);
 					}
+					
+					if (brand.getLastBuyTimes() == null
+							|| behaviors.get(j).getVisitDatetime().after(brand.getLastBuyTimes())) {
+						brand.setLastBuyTimes(behaviors.get(j).getVisitDatetime());
+					} 
 				}
 			}
 			

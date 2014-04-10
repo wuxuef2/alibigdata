@@ -53,11 +53,11 @@ public class Forecast {
 							topic.getBehaviors().get(i).getBrandID(),
 							Consts.ActionType.CLICK,
 							Consts.TopicType.BRAND);
-					if (times >= 1 && userStatistics.getBehaviorLastHappenTime(
+					if (times >= 4 || (times >= 1 && userStatistics.getBehaviorLastHappenTime(
 									topic.getBehaviors(),
 									topic.getBehaviors().get(i).getBrandID(),
 									Consts.ActionType.CLICK,
-									Consts.TopicType.BRAND).getTime() >= deadline.getTime()) {
+									Consts.TopicType.BRAND).getTime() >= deadline.getTime())) {
 						like.add(topic.getBehaviors().get(i).getBrandID());
 					}
 				}
@@ -67,7 +67,7 @@ public class Forecast {
 		return like;
 	}
 	
-	public void myForecast(List<User> users, Date tmpDate){		
+	public void myForecast(List<User> users, Date tmpDate, Date strictDate){		
 		Calendar myDate = Calendar.getInstance();
 		myDate.set(Calendar.MONTH, 5);
 		myDate.set(Calendar.DAY_OF_MONTH, 1);
@@ -83,7 +83,7 @@ public class Forecast {
 				Consts.ActionType.BUY, personNumber);
 		HashMap<Long, Double>timeSpan = brandStatistics.getActionTimeSpan(Consts.ActionType.BUY);
 		for (int i = 0; i < users.size(); i++) {
-			if (!usersScore.containsKey(users.get(i).getId()) || usersScore.get(users.get(i).getId()) < 1) {
+			if (!usersScore.containsKey(users.get(i).getId()) || usersScore.get(users.get(i).getId()) < 2) {
 				users.get(i).setWillBuy(new HashSet<Long>());
 				continue;
 			}
@@ -98,44 +98,99 @@ public class Forecast {
 						user.getBehaviors(), like.get(j),
 						Consts.ActionType.CLICK, Consts.TopicType.BRAND);
 				
+				Date firstVistDate = userStatistics.getBehaviorFirstHappenTime(
+						user.getBehaviors(), 
+						like.get(j),
+						Consts.ActionType.CLICK, 
+						Consts.TopicType.BRAND);
+				Date tmpVistDate = userStatistics.getBehaviorFirstHappenTime(
+						user.getBehaviors(), 
+						like.get(j),
+						Consts.ActionType.BUY, 
+						Consts.TopicType.BRAND);
+				if (tmpVistDate.before(firstVistDate)) firstVistDate = tmpVistDate;
+				Date lastVistDate = userStatistics.getBehaviorLastHappenTime(
+						user.getBehaviors(), 
+						like.get(j),
+						Consts.ActionType.CLICK, 
+						Consts.TopicType.BRAND);
+				tmpVistDate = userStatistics.getBehaviorLastHappenTime(
+						user.getBehaviors(), 
+						like.get(j),
+						Consts.ActionType.BUY, 
+						Consts.TopicType.BRAND);
+				if (tmpVistDate.after(firstVistDate)) lastVistDate = tmpVistDate;
 				
-				if (userBuyTimes >= 1
-						&& userStatistics.getBehaviorLastHappenTime(
-								user.getBehaviors(), like.get(j),
-								Consts.ActionType.BUY, Consts.TopicType.BRAND)
-								.getTime() <= forgetTime.getTime()
-						/*&& userClickTimes >= 1
-						&& userStatistics.getBehaviorLastHappenTime(
-								user.getBehaviors(),
-								like.get(j), Consts.ActionType.CLICK,
-								Consts.TopicType.BRAND).getTime() <= forgetTime
-								.getTime()*/) {
+				// 只会被人在短时间内关注的非热门商品
+				if (lastVistDate.getTime() - firstVistDate.getTime() < 7 * 24 * 60 * 60 * 1000
+						&& lastVistDate.before(tmpDate) 
+						&& brand.getBuyPersons() <= 4) {
 					like.remove(j);
 					continue;
 				}
 				
+				// 神来之笔
 				if ((brand.getBuyTimes() < 1 || brand.getBuyPersons() < 2)
 						&& brand.getClickPersons() > 3) {
 					like.remove(j);
 					continue;
 				}
 				
-				if (brand.getClickPersons() > 30 && brand.getBuyTimes() + brand.getAdd2cartTimes() + brand.getFavouriteTimes() < 5) {
+				// 该用户在很早之前的购买行为，并且在之后未关注过该商品
+				if (userBuyTimes >= 1
+						&& userStatistics.getBehaviorLastHappenTime(
+								user.getBehaviors(), like.get(j),
+								Consts.ActionType.BUY, 
+								Consts.TopicType.BRAND)
+								.getTime() <= tmpDate.getTime()
+						&& userClickTimes >= 1
+						&& userStatistics.getBehaviorLastHappenTime(
+								user.getBehaviors(),
+								like.get(j), 
+								Consts.ActionType.CLICK,
+								Consts.TopicType.BRAND)
+								.getTime() <= tmpDate.getTime()) {
+					like.remove(j);
+					continue;
+				}
+								
+				// 该商品很多人点，但很少人买
+				if (brand.getClickPersons() > 30 && brand.getBuyTimes() < 5) {
 					like.remove(j);
 					continue;
 				}
 				
+				// 冷门商品
 				if (!hotBrandsByScore.containsKey(like.get(j))
-						|| hotBrandsByScore.get(like.get(j)) < 2) {
+						|| hotBrandsByScore.get(like.get(j)) < 1.5) {
 					like.remove(j);
 					continue;
 				}
 				
+				// 耐用品，并且已经购买过的
 				if (brand.getMostBuyTimes() == 1 && brand.getBuyPersons() > 35
 						&& userBuyTimes == 1) {
 					like.remove(j);
 					continue;
 				}
+				
+				// 一定为非周期的物品
+				if ((brand.getMostBuyTimes() == 0 && lastVistDate.before(tmpDate))
+						|| (brand.getMostBuyTimes() == 1 && brand.getLastBuyTimes().before(tmpDate))) {
+					like.remove(j);
+					continue;
+				}
+				/*
+				if (userBuyTimes + brandStatistics.getTopicActionTimes(
+						user.getBehaviors(), like.get(j),
+						Consts.ActionType.FAVOURITE, Consts.TopicType.BRAND) 
+						+ brandStatistics.getTopicActionTimes(
+								user.getBehaviors(), like.get(j),
+								Consts.ActionType.ADD2CART, Consts.TopicType.BRAND) == 0 && lastVistDate.getTime() >= tmpDate.getTime()
+						&& lastVistDate.getTime() <= strictDate.getTime()) {
+					like.remove(j);
+					continue;
+				}*/
 			}
 			users.get(i).setWillBuy(new HashSet<Long>(like));
 		}
@@ -149,9 +204,12 @@ public class Forecast {
 		myDate.set(Calendar.MONTH, 6);
 		myDate.set(Calendar.DAY_OF_MONTH, 7);
 		Date tmpDate = myDate.getTime();
-		
-		myForecast(users, tmpDate);
-		
+
+		Calendar thisDate = Calendar.getInstance();
+		thisDate.set(Calendar.MONTH, 6);
+		thisDate.set(Calendar.DAY_OF_MONTH, 7);
+		Date strictDate = thisDate.getTime();
+		myForecast(users, tmpDate, strictDate);		
 		
 		Evaluator evaluator = new Evaluator();
 		evaluator.eval(users);		
@@ -159,16 +217,20 @@ public class Forecast {
 	
 	public void tmpForecast() {
 		FileWriter fw = null;
-		String path = "D://4-09.txt";
+		String path = "D://4-10.txt";
 		List<User> users = userStatistics.getUsers();
 		int all = 0;
 		
 		Calendar myDate = Calendar.getInstance();
 		myDate.set(Calendar.MONTH, 7);
-		myDate.set(Calendar.DAY_OF_MONTH, 7);
+		myDate.set(Calendar.DAY_OF_MONTH, 4);
 		Date tmpDate = myDate.getTime();
 		
-		myForecast(users, tmpDate);
+		Calendar thisDate = Calendar.getInstance();
+		thisDate.set(Calendar.MONTH, 7);
+		thisDate.set(Calendar.DAY_OF_MONTH, 6);
+		Date strictDate = thisDate.getTime();
+		myForecast(users, tmpDate, strictDate);
 		
 		
 		try {

@@ -1,6 +1,7 @@
 package me.app.mdl;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import me.app.base.Consts;
 import me.app.base.Consts.BrandType;
@@ -19,6 +20,7 @@ public class BrandExtend extends Brand {
 	private int add2cartPersons = 0;
 	
 	private int mostBuyTimes = 0;
+	private Date lastBuyTimes = null;
 	
 	private ArrayList<Long> belongClass = new ArrayList<Long>();
 	private ArrayList<Long> complements = new ArrayList<Long>();
@@ -123,5 +125,13 @@ public class BrandExtend extends Brand {
 
 	public void setMostBuyTimes(int mostBuyTimes) {
 		this.mostBuyTimes = mostBuyTimes;
+	}
+
+	public Date getLastBuyTimes() {
+		return lastBuyTimes;
+	}
+
+	public void setLastBuyTimes(Date lastBuyTimes) {
+		this.lastBuyTimes = lastBuyTimes;
 	}
 }
